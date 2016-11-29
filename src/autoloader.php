@@ -25,23 +25,17 @@ function autoload( $fullname ) {
 		return;
 	}
 
-	// Remove the root namespace
-	$name = substr( $fullname, strlen( __NAMESPACE__ ) + 1 );
-
 	// Default to framework directory
 	$basesdir = __DIR__ . '/includes/';
 
 	// Convert to lowercase, hyphenated form
-	$name = preg_replace( '/[^a-z0-9\\\]+/i', '-', strtolower( $name ) );
+	$name = preg_replace( '/[^a-z0-9]+/i', '-', strtolower( $fullname ) );
 
 	// Loop through each class type and try to load it
 	$types = array( 'abstract', 'class', 'interface', 'trait' );
 	foreach ( $types as $type ) {
-		// Prefix the last part of the name with the type
-		$file = preg_replace( '/([a-z0-9\-]+)$/i', "{$type}-$1", $name );
-
 		// Create the full path
-		$file = $basesdir . str_replace( '\\', DIRECTORY_SEPARATOR, $file ) . '.php';
+		$file = $basesdir . $type . '-' . $name . '.php';
 
 		// Test if the file exists, load if so
 		if ( file_exists( $file ) ) {
