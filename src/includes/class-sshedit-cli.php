@@ -103,36 +103,39 @@ class CLI extends Shell {
 	 * @since 1.0.0
 	 */
 	protected function cmd_help() {
-		echo implode( "\n", array(
-			'open SOURCE',
-			'Open and parse a config file for editing.',
-			'',
-			'dump [SECTION [ALIAS]]',
-			'Dump the entire object for a section/alias.',
-			'',
-			'list [SECTION [ALIAS]]',
-			'List entries/details for a section/alias.',
-			'',
-			'select [section|alias] ID',
-			'Select a section/alias to use for subsequent commands.',
-			'',
-			'add [section ID|alias ID [to SECTION]]',
-			'Add a section/alias. Will prompt for values.',
-			'',
-			'edit [SECTION [ALIAS]]',
-			'Edit a section/alias. Will prompt for changes.',
-			'',
-			'delete [SECTION [ALIAS]]',
-			'Delete a section/entry.',
-			'',
-			'print [SECTION [ALIAS]]',
-			'Print out the compiled config file.',
-			'',
-			'save [DESTINATION]',
-			'Save the compiled config file.',
-			'',
-			'quit',
-			'Take a wild guess.',
-		) );
+		echo <<<HELP
+
+open SOURCE
+Open and parse a config file for editing.
+
+dump [SECTION [ALIAS]]
+Dump the entire object for a section/alias.
+
+list [SECTION [ALIAS]]
+List entries/details for a section/alias.
+
+select [section|alias] ID
+Select a section/alias to use for subsequent commands.
+
+add [section ID|alias ID [to SECTION]]
+Add a section/alias. Will prompt for values.
+
+edit [SECTION [ALIAS]]
+Edit a section/alias. Will prompt for changes.
+
+delete [SECTION [ALIAS]]
+Delete a section/entry.
+
+print [SECTION [ALIAS]]
+Print out the compiled config file.
+
+save [DESTINATION]
+Save the compiled config file.
+
+quit
+Take a wild guess.
+
+
+HELP;
 	}
 }
