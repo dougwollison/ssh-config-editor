@@ -149,9 +149,6 @@ class CLI extends Shell {
 open SOURCE
 Open and parse a config file for editing.
 
-dump [SECTION [ALIAS]]
-Dump the entire object for a section/alias.
-
 list [SECTION [ALIAS]]
 List entries/details for a section/alias.
 
@@ -167,11 +164,14 @@ Edit a section/alias. Will prompt for changes.
 delete [SECTION [ALIAS]]
 Delete a section/entry.
 
+save [DESTINATION]
+Save the compiled config file.
+
 print [SECTION [ALIAS]]
 Print out the compiled config file.
 
-save [DESTINATION]
-Save the compiled config file.
+dump [SECTION [ALIAS]]
+Dump the entire object for a section/alias.
 
 quit
 Take a wild guess.
