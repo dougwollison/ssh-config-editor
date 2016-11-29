@@ -122,6 +122,23 @@ class CLI extends Shell {
 	}
 
 	/**
+	 * Check if there unsaved changes, confirm action.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Wether or not to abort the action.
+	 */
+	protected function is_unsaved() {
+		if ( $this->config && $this->config->has_changed() ) {
+			if ( ! $this->confirm( "You have unsaved changes. Discard?" ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Print the list of available commands.
 	 *
 	 * @since 1.0.0
@@ -171,10 +188,8 @@ HELP;
 	 * @param $file The file to open.
 	 */
 	public function cmd_open( $file = null ) {
-		if ( $this->config && $this->config->has_changed() ) {
-			if ( ! $this->confirm( "You have unsaved changes. Discard?" ) ) {
-				return;
-			}
+		if ( $this->is_unsaved() ) {
+			return;
 		}
 
 		if ( ! $file ) {
@@ -219,5 +234,18 @@ HELP;
 		$this->config->save( $file );
 
 		echo "Config saved to {$file}.\n";
+	}
+
+	/**
+	 * Quit assuming no changes have been made.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_quit() {
+		if ( $this->is_unsaved() ) {
+			return;
+		}
+
+		parent::cmd_quit();
 	}
 }
