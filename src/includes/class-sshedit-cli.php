@@ -219,6 +219,46 @@ HELP;
 	}
 
 	/**
+	 * List sections/aliases/properties.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_list() {
+	}
+
+	/**
+	 * Select a section/alias to use.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_select() {
+	}
+
+	/**
+	 * Create a section/alias.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_add() {
+	}
+
+	/**
+	 * Edit a section/alias.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_edit() {
+	}
+
+	/**
+	 * Delete a section/alias.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_delete() {
+	}
+
+	/**
 	 * Open a config file for editing.
 	 *
 	 * @since 1.0.0
