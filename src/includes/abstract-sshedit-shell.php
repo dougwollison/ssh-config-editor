@@ -47,7 +47,7 @@ abstract class Shell {
 		while ( true ) {
 			$this->before_loop();
 
-			$command = $this->prompt( self::NAME . ':' . implode( '/', $this->path ) . ' $' );
+			$command = $this->prompt( static::NAME . ':' . implode( '/', $this->path ) . ' $' );
 
 			list( $command, $args ) = $this->parse_command( $command );
 
