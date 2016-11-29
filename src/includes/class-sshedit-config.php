@@ -1,6 +1,6 @@
 <?php
 /**
- * The Section Collection.
+ * The Config Collection.
  *
  * @package SSH_Edit
  *
@@ -9,15 +9,15 @@
 namespace SSHEdit;
 
 /**
- * The Section collection.
+ * The Config collection.
  *
- * A collection of related ssh aliases.
+ * A collection of Section collections.
  *
  * @api
  *
  * @since 1.0.0
  */
-class Section extends Items {
+class Config extends Items {
 	/**
 	 * The class name to use for new items.
 	 *
@@ -25,5 +25,5 @@ class Section extends Items {
 	 *
 	 * @param string
 	 */
-	const CHILD_CLASS = 'Alias';
+	const CHILD_CLASS = 'Section';
 }
