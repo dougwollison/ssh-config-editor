@@ -43,7 +43,7 @@ class CLI extends Shell {
 	 *
 	 * @var Config
 	 */
-	protected $config;
+	protected $config = null;
 
 	/**
 	 * The ID of the current Section being edited.
@@ -107,6 +107,21 @@ class CLI extends Shell {
 	}
 
 	/**
+	 * Ensure $config is set, print error otherwise.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Wether or not the config is set.
+	 */
+	protected function has_config() {
+		if ( is_null( $this->config ) ) {
+			echo "ERROR: No config file opened/loaded yet.\n";
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Print the list of available commands.
 	 *
 	 * @since 1.0.0
@@ -156,10 +171,19 @@ HELP;
 	 * @param $file The file to open.
 	 */
 	public function cmd_open( $file = null ) {
+		if ( $this->config && $this->config->has_changed() ) {
+			if ( ! $this->confirm( "You have unsaved changes. Discard?" ) ) {
+				return;
+			}
+		}
+
 		if ( ! $file ) {
 			echo "Please specify a file to open.\n";
 			return;
 		}
+
+		$file = str_replace( '~', $_SERVER['HOME'], $file );
+		$file = realpath( $file );
 
 		if ( file_exists( $file ) ) {
 			$this->config = new Config( $file );
@@ -173,5 +197,27 @@ HELP;
 
 		echo "File not found and location not writable.\n";
 		return;
+	}
+
+	/**
+	 * Save the current config.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param $file The file to save to.
+	 */
+	public function cmd_save( $file = null ) {
+		if ( ! $this->has_config() ) {
+			return;
+		}
+
+		if ( ! is_writable( $file ) ) {
+			echo "Unable to write to {$file}\n";
+			return;
+		}
+
+		$this->config->save( $file );
+
+		echo "Config saved to {$file}.\n";
 	}
 }
