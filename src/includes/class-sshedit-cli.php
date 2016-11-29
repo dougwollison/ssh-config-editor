@@ -37,6 +37,15 @@ class CLI extends Shell {
 	protected $path = array();
 
 	/**
+	 * The config file currently being edited.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var Config
+	 */
+	protected $config;
+
+	/**
 	 * The ID of the current Section being edited.
 	 *
 	 * @since 1.0.0
@@ -137,5 +146,32 @@ Take a wild guess.
 
 
 HELP;
+	}
+
+	/**
+	 * Open a config file for editing.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param $file The file to open.
+	 */
+	public function cmd_open( $file = null ) {
+		if ( ! $file ) {
+			echo "Please specify a file to open.\n";
+			return;
+		}
+
+		if ( file_exists( $file ) ) {
+			$this->config = new Config( $file );
+			echo "File loaded and ready for editing.\n";
+			return;
+		} else if ( is_writable( $file ) ) {
+			$this->config = new Config( $file );
+			echo "File open and ready for editing.\n";
+			return;
+		}
+
+		echo "File not found and location not writable.\n";
+		return;
 	}
 }
