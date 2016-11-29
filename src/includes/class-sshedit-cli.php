@@ -64,15 +64,11 @@ class CLI extends Shell {
 	public function __construct( $file = null ) {
 		echo "Welcome to SSH Edit. Type \"help\" for options, or \"quit\" to exit.\n";
 
-		while ( is_null( $file ) || ! file_exists( $file ) ) {
-			$file = $this->prompt( "Please provide the path to an SSH config file to create/edit:" );
-
-			if ( $file && ! file_exists( $file ) )  {
-				echo "File not found.\n";
-			}
+		if ( $file && file_exists( $file ) ) {
+			$this->config = new Config( $file );
+		} else {
+			echo "No file available for editing, please use the \"open\" command.\n";
 		}
-
-		$this->config = new Config( $file );
 
 		parent::__construct();
 	}
@@ -83,7 +79,7 @@ class CLI extends Shell {
 	 * @since 1.0.0
 	 */
 	protected function before_loop() {
-		$this->path = "{$this->section}/{$this->alias}";
+		$this->path = array( $this->section, $this->alias );
 	}
 
 	/**
@@ -99,5 +95,44 @@ class CLI extends Shell {
 		$command = str_replace( ' to ', ' ', $command );
 
 		return parent::parse_command( $command );
+	}
+
+	/**
+	 * Print the list of available commands.
+	 *
+	 * @since 1.0.0
+	 */
+	protected function cmd_help() {
+		echo implode( "\n", array(
+			'open SOURCE',
+			'Open and parse a config file for editing.',
+			'',
+			'dump [SECTION [ALIAS]]',
+			'Dump the entire object for a section/alias.',
+			'',
+			'list [SECTION [ALIAS]]',
+			'List entries/details for a section/alias.',
+			'',
+			'select [section|alias] ID',
+			'Select a section/alias to use for subsequent commands.',
+			'',
+			'add [section ID|alias ID [to SECTION]]',
+			'Add a section/alias. Will prompt for values.',
+			'',
+			'edit [SECTION [ALIAS]]',
+			'Edit a section/alias. Will prompt for changes.',
+			'',
+			'delete [SECTION [ALIAS]]',
+			'Delete a section/entry.',
+			'',
+			'print [SECTION [ALIAS]]',
+			'Print out the compiled config file.',
+			'',
+			'save [DESTINATION]',
+			'Save the compiled config file.',
+			'',
+			'quit',
+			'Take a wild guess.',
+		) );
 	}
 }
