@@ -1,6 +1,6 @@
 <?php
 /**
- * The Alias Model.
+ * The Item Model Framework.
  *
  * @package SSH_Edit
  *
@@ -9,9 +9,9 @@
 namespace SSHEdit;
 
 /**
- * The Alias model.
+ * The Item model.
  *
- * A representation of an ssh alias.
+ * Framework for models.
  *
  * @api
  *
@@ -102,7 +102,7 @@ abstract class Item {
 	 *
 	 * @param string $property The property to get the value of.
 	 * @param mixed  $value    The value to use.
-	 * @param bool   $silent   Wether or not to update $changed.
+	 * @param bool   $silent   Optional Wether or not to update $changed.
 	 *
 	 * @return mixed The value of the property.
 	 */
