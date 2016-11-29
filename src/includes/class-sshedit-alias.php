@@ -53,4 +53,21 @@ class Alias extends Item {
 	 * @var int
 	 */
 	protected $port = 22;
+
+	/**
+	 * Compile into SSH config file format.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The formatted data.
+	 */
+	public function compile() {
+		return
+		"Host {$this->id}\n" .
+		"# {$this->comment}\n" .
+		"	HostName {$this->host_name}\n" .
+		"	IdentityFile {$this->identity_file}\n" .
+		"	User {$this->user}\n" .
+		"	Port {$this->port}\n";
+	}
 }

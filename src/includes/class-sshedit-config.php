@@ -77,4 +77,37 @@ class Config extends Items {
 			$this->changed = false;
 		}
 	}
+
+	/**
+	 * Compile into SSH config file format.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The formatted data.
+	 */
+	public function compile() {
+		$output = "## Built with SSH Edit.\n\n";
+
+		$this->sort();
+		foreach ( $this->items as $section ) {
+			$output .= trim( $section->compile() ) ."\n\n";
+		}
+
+		return trim( $output ) ."\n\n";
+	}
+
+	/**
+	 * Save the compiled output to a the file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $file Optional. A specific file to save to (defaults to the $this->file).
+	 */
+	public function save( $file = null ) {
+		$file = $file ?: $this->file;
+
+		$contents = $this->compile();
+
+		file_put_contents( $file, $contents );
+	}
 }

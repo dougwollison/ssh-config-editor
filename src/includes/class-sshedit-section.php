@@ -26,4 +26,25 @@ class Section extends Items {
 	 * @param string
 	 */
 	const CHILD_CLASS = 'Alias';
+
+	/**
+	 * Compile into SSH config file format.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The formatted data.
+	 */
+	public function compile() {
+		$output =
+		"# [{$this->id}]\n" .
+		"# {$this->comment}\n" .
+		"\n";
+
+		$this->sort();
+		foreach ( $this->items as $alias ) {
+			$output .= $alias->compile();
+		}
+
+		return "{$output}\n";
+	}
 }
