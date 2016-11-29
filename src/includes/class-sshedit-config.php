@@ -50,21 +50,22 @@ class Config extends Items {
 			$section = $this->add( '(unsorted)' );
 			$alias = null;
 
-			foreach ( explode("\n", $data ) as $line ) {
+			$data = file_get_contents( $file );
+			foreach ( explode( "\n", $data ) as $line ) {
 				if ( preg_match( '/^# \[(\w+)\]/', $line, $matches ) ) {
-					$section = $this->add( $matches[1], null, 'silent' );
+					$section = $this->add( $matches[1], array(), 'silent' );
 				} else
 				if ( preg_match( '/^# =+ (.+) =+/', $line, $matches ) ) {
 					if ( $section ) {
-						$section->comment( $matches[1] );
+						$section->set( 'comment', $matches[1], 'silent' );
 					}
 				} else
 				if ( preg_match( '/^Host (.+)/', $line, $matches ) ) {
-					$alias = $section->add( $matches[1], null, 'silent' );
+					$alias = $section->add( $matches[1], array(), 'silent' );
 				} else
 				if ( preg_match( '/^# (.+)/', $line, $matches ) ) {
 					if ( $alias ) {
-						$alias->comment( $matches[1] );
+						$alias->set( 'comment', $matches[1], 'silent' );
 					}
 				} else
 				if ( preg_match( '/^\s+(\w+) (.+)/', $line, $matches ) ) {
