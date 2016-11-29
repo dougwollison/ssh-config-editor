@@ -3,7 +3,6 @@
  * SSH Edit Autoloader
  *
  * @package SSH_Edit
- * @subpackage Root
  *
  * @since 1.0.0
  */
