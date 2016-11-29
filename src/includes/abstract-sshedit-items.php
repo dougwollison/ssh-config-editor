@@ -63,7 +63,7 @@ abstract class Items extends Item {
 		}
 
 		if ( $properties && ! isset( $properties[ 'order'] ) ) {
-			$item->set( 'order', $this->increment++ );
+			$item->set( 'order', $this->increment++, 'silent' );
 		}
 
 		$this->items[ $item->id ] = $item;
@@ -71,6 +71,8 @@ abstract class Items extends Item {
 		if ( ! $silent ) {
 			$this->changed = true;
 		}
+
+		return $item;
 	}
 
 	/**
