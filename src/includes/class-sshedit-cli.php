@@ -139,6 +139,44 @@ class CLI extends Shell {
 	}
 
 	/**
+	 * Find the target item requested based on provided section/alias.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $section Optional The section to find.
+	 * @param string $alias   Optioanl The alias to find.
+	 *
+	 * @return Item The found target item. FALSE on failure.
+	 */
+	protected function find_target( $section = null, $alias = null ) {
+		$target = $this->config;
+
+		if ( is_null( $section ) ) {
+			$section = $this->section;
+		} else
+		if ( is_null( $alias ) ) {
+			$alias = $this->alias;
+		}
+
+		if ( $section ) {
+			if ( ! $target->exists( $section ) ) {
+				echo "Section {$section} not found.\n";
+				return;
+			}
+			$target = $target->fetch( $section );
+
+			if ( $alias ) {
+				if ( ! $target->exists( $alias ) ) {
+					echo "Alias {$alias} not found in section {$section}.\n";
+					return;
+				}
+
+				$target = $target->fetch( $alias );
+			}
+		}
+	}
+
+	/**
 	 * Print the list of available commands.
 	 *
 	 * @since 1.0.0
@@ -212,6 +250,34 @@ HELP;
 
 		echo "File not found and location not writable.\n";
 		return;
+	}
+
+	/**
+	 * Print out the compiled config or a section/alias in it.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $section Optional The section to print.
+	 * @param string $alias   Optional The alias to print.
+	 */
+	public function cmd_print( $section = null, $alias = null ) {
+		$target = $this->find_target( $section, $alias );
+
+		echo $target->compile();
+	}
+
+	/**
+	 * Dump a section/alias in it.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $section Optional The section to print.
+	 * @param string $alias   Optional The alias to print.
+	 */
+	public function cmd_dump( $section = null, $alias = null ) {
+		$target = $this->find_target( $section, $alias );
+
+		print_r( $target );
 	}
 
 	/**
