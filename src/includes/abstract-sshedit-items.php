@@ -37,6 +37,15 @@ abstract class Items extends Item {
 	protected $items = array();
 
 	/**
+	 * Internal increment counter for child order.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var int
+	 */
+	protected $increment = 0;
+
+	/**
 	 * Add an item.
 	 *
 	 * @since 1.0.0
@@ -51,6 +60,10 @@ abstract class Items extends Item {
 		$class = __NAMESPACE__ . '\\' . static::CHILD_CLASS;
 		if ( ! is_a( $item, $class ) ) {
 			$item = new $class( $item, $properties );
+		}
+
+		if ( $properties && ! isset( $properties[ 'order'] ) ) {
+			$item->set( 'order', $this->increment++ );
 		}
 
 		$this->items[ $item->id ] = $item;
