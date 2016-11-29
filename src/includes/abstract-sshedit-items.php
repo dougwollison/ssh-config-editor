@@ -9,11 +9,11 @@
 namespace SSHEdit;
 
 /**
- * The Items model.
+ * The Items collection.
  *
  * Framework for colections.
  *
- * @api
+ * @internal Extended by the Section and Config collections.
  *
  * @since 1.0.0
  */

@@ -13,7 +13,7 @@ namespace SSHEdit;
  *
  * Framework for models.
  *
- * @api
+ * @internal Extended by the Alias model and the Items framework.
  *
  * @since 1.0.0
  */
