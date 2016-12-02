@@ -176,7 +176,7 @@ abstract class Items extends Item {
 		}
 		
 		foreach ( $this->items as $item ) {
-			$array[ $item->id() ] = $item->dump( 'self' );
+			$array[ $item->get( 'id' ) ] = $item->dump( 'self' );
 		}
 		return $array;
 	}
