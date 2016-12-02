@@ -70,7 +70,7 @@ class Alias extends Item {
 		"	User {$this->user}\n" .
 		"	Port {$this->port}\n";
 	}
-	
+
 	/**
 	 * Dump the alias as an array.
 	 *
@@ -84,7 +84,7 @@ class Alias extends Item {
 		if ( $self ) {
 			return parent::dump( $self );
 		}
-		
+
 		return array(
 			'Host' => $this->id,
 			'HostName' => $this->hostname,

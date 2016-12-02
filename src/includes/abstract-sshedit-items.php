@@ -158,7 +158,7 @@ abstract class Items extends Item {
 
 		return $this->changed;
 	}
-	
+
 	/**
 	 * Dump the items as an array.
 	 *
@@ -170,11 +170,11 @@ abstract class Items extends Item {
 	 */
 	public function dump( $self = false ) {
 		$array = array();
-		
+
 		if ( $self ) {
 			return parent::dump( $self );
 		}
-		
+
 		foreach ( $this->items as $item ) {
 			$array[ $item->get( 'id' ) ] = $item->dump( 'self' );
 		}

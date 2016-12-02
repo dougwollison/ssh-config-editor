@@ -35,7 +35,7 @@ abstract class Shell {
 	 * @var array
 	 */
 	protected $path = array();
-	
+
 	/**
 	 * The path to the realine history file.
 	 *
@@ -44,7 +44,7 @@ abstract class Shell {
 	 * @var array
 	 */
 	protected $command_log = '~/.mish_history';
-	
+
 	/**
 	 * Utility; resolve local/home paths.
 	 *
@@ -59,7 +59,7 @@ abstract class Shell {
 		if ( strpos( $path, '/' ) !== 0 ) {
 			$path = getcwd() . '/' . $path;
 		}
-		
+
 		return $path;
 	}
 
@@ -75,23 +75,23 @@ abstract class Shell {
 		if ( file_exists( $this->command_log ) ) {
 			readline_read_history( $this->command_log );
 		}
-		
+
 		while ( true ) {
 			$this->before_loop();
 
 			$command = $this->prompt( static::NAME . ':' . implode( '/', $this->path ) . ' $' );
-			
+
 			readline_add_history( $command );
-			
+
 			foreach ( preg_split( '/\s*&{1,2}\s*/', $command, 0, PREG_SPLIT_NO_EMPTY ) as $command ) {
 				list( $command, $args ) = $this->parse_command( $command );
-	
+
 				$method = "cmd_$command";
 				if ( method_exists( $this, $method ) ) {
 					call_user_func_array( array( $this, $method ), $args );
 				} else {
 					echo "Command not found.\n";
-				}	
+				}
 			}
 
 			$this->after_loop();
@@ -149,7 +149,7 @@ abstract class Shell {
 
 		return array( $command, $args );
 	}
-	
+
 	/**
 	 * Print a pretty table to display data.
 	 *
@@ -160,12 +160,12 @@ abstract class Shell {
 	 */
 	protected function pretty_table( $columns, $data ) {
 		$rows = array( $columns );
-	
+
 		$maxlengths = array_map( 'strlen', $columns );
-	
+
 		foreach ( $data as $key => $value ) {
 			$row = array();
-	
+
 			foreach ( $columns as $flag => $label ) {
 				$val = null;
 				if ( $flag == '@' ) {
@@ -180,18 +180,18 @@ abstract class Shell {
 				if ( is_a( $value, __NAMESPACE__ . '\\Item' ) ) {
 					$val = $value->get( $flag );
 				}
-	
+
 				$maxlengths[ $flag ] = max( array( strlen( $val ), $maxlengths[ $flag ] ) );
-	
+
 				$row[ $flag ] = $val;
 			}
-	
+
 			$rows[] = $row;
 		}
-	
+
 		$width = array_sum( $maxlengths ) + ( count( $columns ) * 2 ) + 3;
 		$border = str_repeat( '=', $width ) ."\n";
-	
+
 		$output = $border;
 		foreach ( $rows as $i => $row ) {
 			foreach ( $row as $flag => $cell ) {
@@ -200,15 +200,15 @@ abstract class Shell {
 				$output .= ' ';
 			}
 			$output .= '|';
-	
+
 			$output .= "\n";
-	
+
 			if ( ! $i ) {
 				$output .= $border;
 			}
 		}
 		$output .= $border;
-	
+
 		echo"\n{$output}\n";
 	}
 
@@ -221,7 +221,7 @@ abstract class Shell {
 		if ( is_writable( $this->command_log ) || is_writable( dirname( $this->command_log ) ) ) {
 			readline_write_history( $this->command_log );
 		}
-		
+
 		echo"Bye!\n";
 		exit;
 	}

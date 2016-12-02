@@ -129,7 +129,7 @@ abstract class Item {
 	public function has_changed() {
 		return $this->changed;
 	}
-	
+
 	/**
 	 * Dump the item as an array.
 	 *

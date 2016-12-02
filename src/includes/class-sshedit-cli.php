@@ -35,7 +35,7 @@ class CLI extends Shell {
 	 * @var array
 	 */
 	protected $path = array();
-	
+
 	/**
 	 * The path to the realine history file.
 	 *
@@ -79,13 +79,13 @@ class CLI extends Shell {
 	 */
 	public function __construct() {
 		echo "Welcome to SSH Edit. Type \"help\" for options, or \"quit\" to exit.\n";
-		
+
 		$arguments = $_SERVER['argv'];
 		array_shift( $arguments );
-		
+
 		if ( isset( $arguments[0] ) ) {
 			$file = $arguments[0];
-			
+
 			if ( ! file_exists( $file ) && ! is_writable( dirname( $file ) ) ) {
 				echo "Provided file not found.\n";
 			}
@@ -165,7 +165,7 @@ class CLI extends Shell {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Resolve the provided section/alias arguments.
 	 *
@@ -180,7 +180,7 @@ class CLI extends Shell {
 		if ( $section && $alias ) {
 			return false;
 		}
-		
+
 		if ( $section && $this->section ) {
 			$alias = $section;
 			$section = $this->section;
@@ -218,7 +218,7 @@ class CLI extends Shell {
 				$target = $target->fetch( $alias );
 			}
 		}
-		
+
 		return $target;
 	}
 
@@ -274,24 +274,24 @@ HELP;
 			echo "Please provide a section/alias ID.\n";
 			return;
 		}
-		
+
 		if ( strpos( $section, '/' ) !== false ) {
 			list( $section, $alias ) = array_pad( explode( '/', $section ), 2, null );
 		}
-		
+
 		if ( $section && ! $this->config->exists( $section ) ) {
 			echo "Section '{$section}' not found.\n";
 			return;
 		}
-		
+
 		$this->section = $section;
-		
+
 		if ( $alias ) {
 			if ( $this->config->fetch( $section )->exists( $alias ) ) {
 				echo "Alias '{$alias}' not found in section '{$section}'.\n";
 				return;
 			}
-			
+
 			$this->alias = $alias;
 			echo "Selected alias '{$alias}' in section '{$section}'.\n";
 		}
@@ -313,13 +313,13 @@ HELP;
 		if ( ! ( $target = $this->find_target( $section, $alias ) ) ) {
 			return;
 		}
-		
+
 		$columns = array( '@' => 'Property', '$' => 'Value' );
-		
+
 		if ( is_a( $target, __NAMESPACE__ . '\\Items' ) ) {
 			$columns = array( '@' => 'Entry', 'comment' => 'Description' );
 		}
-		
+
 		return $this->pretty_table( $columns, $target->dump() );
 	}
 
@@ -347,7 +347,7 @@ HELP;
 			echo "Specify a type of entry to add; 'section' or 'alias'.\n";
 			return;
 		}
-		
+
 		if ( ! $id ) {
 			$id = $this->prompt( 'Please provide an ID.' );
 			if ( ! $id ) {
@@ -355,16 +355,16 @@ HELP;
 				return;
 			}
 		}
-		
+
 		switch ( $type ) {
 			case 'section':
 				$section = $this->config->add( $id );
 				$section->set( 'comment', $this->prompt( 'Describe this section:' ) );
 				$this->section = $id;
-				
+
 				echo "Section created and selected.\n";
 				break;
-				
+
 			case 'alias':
 				if ( $parent ) {
 					if ( ! $this->config->exists( $parent ) ) {
@@ -376,20 +376,20 @@ HELP;
 					$section = $this->config->fetch( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
 					$this->section = $section->get( 'id' );
 				}
-				
+
 				$section = $this->config->fetch( $this->section );
-				
+
 				$alias = $section->add( $id );
 				$alias->set( 'comment', $this->prompt( 'Describe this section:' ) );
-				
+
 				$alias->set( 'hostname', $this->prompt( 'Enter the host name.' ) );
 				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
 				$alias->set( 'port', $this->prompt( 'Enter the port number.', 22 ) );
-				
+
 				$default_path = basename( $this->config->get( 'file' ) ) . '/' . $this->section . '/' . $id;
-				
+
 				$keyfile = self::realpath( $this->prompt( 'Enter the path to the public key file.', $default_path ) );
-				
+
 				if ( ! file_exists( $keyfile ) ) {
 					if ( $this->confirm( 'Key file does not exist. Create one there?' ) ) {
 						$keyfile = escapeshellarg( $keyfile );
@@ -397,14 +397,14 @@ HELP;
 						passthru( "ssh-keygen -t RSA -b 4096 -f $keyfile" );
 					}
 				}
-				
+
 				$alias->set( 'identityfile', $keyfile );
-				
+
 				$this->alias = $id;
-				
+
 				echo "Alias created and selected.\n";
 				break;
-				
+
 			default:
 				echo "Unknown type specified; please specify 'section' or 'alias'.\n";
 				break;
