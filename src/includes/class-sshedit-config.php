@@ -47,7 +47,7 @@ class Config extends Items {
 		$this->file = $file;
 
 		if ( file_exists( $file ) ) {
-			$section = $this->add( '(unsorted)' );
+			$section = null;
 			$alias = null;
 
 			$data = file_get_contents( $file );
@@ -56,11 +56,15 @@ class Config extends Items {
 					$section = $this->add( $matches[1], array(), 'silent' );
 				} else
 				if ( preg_match( '/^# =+ (.+) =+/', $line, $matches ) ) {
-					if ( $section ) {
-						$section->set( 'comment', $matches[1], 'silent' );
+					if ( ! $section ) {
+						$section = $this->add( '(unsorted)' );
 					}
+					$section->set( 'comment', $matches[1], 'silent' );
 				} else
 				if ( preg_match( '/^Host (.+)/', $line, $matches ) ) {
+					if ( ! $section ) {
+						$section = $this->add( '(unsorted)' );
+					}
 					$alias = $section->add( $matches[1], array(), 'silent' );
 				} else
 				if ( preg_match( '/^# (.+)/', $line, $matches ) ) {
