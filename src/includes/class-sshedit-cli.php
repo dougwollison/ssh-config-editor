@@ -382,9 +382,9 @@ HELP;
 				$alias = $section->add( $id );
 				$alias->set( 'comment', $this->prompt( 'Describe this alias:' ) );
 
-				$alias->set( 'hostname', $this->prompt( 'Enter the host name.' ) );
-				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
-				$alias->set( 'port', $this->prompt( 'Enter the port number.', 22 ) );
+				$alias->set( 'hostname', $this->prompt( 'Enter the host name:' ) );
+				$alias->set( 'user', $this->prompt( 'Enter the username:' ) );
+				$alias->set( 'port', $this->prompt( 'Enter the port number:', 22 ) );
 
 				$default_path = basename( $this->config->get( 'file' ) ) . '/' . $this->section . '/' . $id;
 
