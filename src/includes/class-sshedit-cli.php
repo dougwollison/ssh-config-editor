@@ -296,8 +296,38 @@ HELP;
 	 *
 	 * @since 1.0.0
 	 */
-	public function cmd_add() {
-		//
+	public function cmd_add( $type = null, $id = null ) {
+		if ( ! $type ) {
+			echo "Specify a type of entry to add; 'section' or 'alias'.\n";
+			return;
+		}
+		
+		if ( ! $id ) {
+			$id = $this->prompt( 'Please provide an ID.' );
+			if ( ! $id ) {
+				echo "You must specify an ID.\n";
+				return;
+			}
+		}
+		
+		switch ( $type ) {
+			case 'section':
+				$section = $this->config->add( $id );
+				$section->set( 'comment', $this->prompt( 'Describe this section' ) );
+				break;
+				
+			case 'alias':
+				if ( ! $this->section ) {
+					$this->section = $this->config->get( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
+				}
+				$alias = $section->add( $id );
+				$alias->set( 'comment', $this->prompt( 'Describe this section' ) );
+				break;
+				
+			default:
+				echo "Unknown type specified; please specify 'section' or 'alias'.\n";
+				break;
+		}
 	}
 
 	/**
