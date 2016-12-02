@@ -76,16 +76,35 @@ class CLI extends Shell {
 	 * Initailize the CLI.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @param string $file The file to load.
 	 */
-	public function __construct( $file = null ) {
+	public function __construct() {
 		echo "Welcome to SSH Edit. Type \"help\" for options, or \"quit\" to exit.\n";
+		
+		$arguments = $_SERVER['argv'];
+		array_shift( $arguments );
+		
+		if ( isset( $arguments[0] ) ) {
+			$file = $arguments[0];
+			
+			if ( ! file_exists( $file ) && ! is_writable( dirname( $file ) ) ) {
+				echo "Provided file not found.\n";
+			}
+		} else {
+			$file = getcwd() . '/.ssh/config';
+			if ( ! file_exists( $file ) ) {
+				if ( basename( dirname( getcwd() ) ) == '.ssh' ) {
+					$file = getcwd() . '/config';
+				} else {
+					$file = self::realpath( '~/.ssh/config' );
+				}
+			}			
+		}
 
 		if ( $file && file_exists( $file ) ) {
 			$this->config = new Config( $file );
+			echo "Loaded file '{$file}' for editing.\n";
 		} else {
-			echo "No file available for editing, please use the \"open\" command.\n";
+			echo "Please use the \"open\" command to load a config file.\n";
 		}
 
 		parent::__construct();
