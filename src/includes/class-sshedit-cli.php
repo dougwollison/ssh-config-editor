@@ -97,10 +97,11 @@ class CLI extends Shell {
 				} else {
 					$file = self::realpath( '~/.ssh/config' );
 				}
-			}			
+			}
 		}
 
 		if ( $file && file_exists( $file ) ) {
+			$file = realpath( $file );
 			$this->config = new Config( $file );
 			echo "Loaded file '{$file}' for editing.\n";
 		} else {
@@ -373,7 +374,7 @@ HELP;
 					$this->section = $parent;
 				} elseif ( ! $this->section ) {
 					$section = $this->config->fetch( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
-					$this->section = $section->id;
+					$this->section = $section->get( 'id' );
 				}
 				
 				$section = $this->config->fetch( $this->section );
@@ -385,7 +386,7 @@ HELP;
 				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
 				$alias->set( 'port', $this->prompt( 'Enter the port number.', 22 ) );
 				
-				$default_path = $this->section . '/' . $id;
+				$default_path = basename( $this->config->get( 'file' ) ) . '/' . $this->section . '/' . $id;
 				
 				$keyfile = self::realpath( $this->prompt( 'Enter the path to the public key file.', $default_path ) );
 				
