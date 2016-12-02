@@ -25,7 +25,7 @@ class Alias extends Item {
 	 *
 	 * @var string
 	 */
-	protected $host_name;
+	protected $hostname;
 
 	/**
 	 * The identity file/key for the connection.
@@ -34,7 +34,7 @@ class Alias extends Item {
 	 *
 	 * @var string
 	 */
-	protected $identity_file;
+	protected $identityfile;
 
 	/**
 	 * The username for the connection.
@@ -65,8 +65,8 @@ class Alias extends Item {
 		return
 		"Host {$this->id}\n" .
 		"# {$this->comment}\n" .
-		"	HostName {$this->host_name}\n" .
-		"	IdentityFile {$this->identity_file}\n" .
+		"	HostName {$this->hostname}\n" .
+		"	IdentityFile {$this->identityfile}\n" .
 		"	User {$this->user}\n" .
 		"	Port {$this->port}\n";
 	}
@@ -81,8 +81,8 @@ class Alias extends Item {
 	public function dump() {
 		return array(
 			'Host' => $this->id,
-			'HostName' => $this->host_name,
-			'IdentityFile' => $this->identity_file,
+			'HostName' => $this->hostname,
+			'IdentityFile' => $this->identityfile,
 			'User' => $this->user,
 			'Port' => $this->port,
 		);

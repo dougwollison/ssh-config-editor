@@ -89,6 +89,7 @@ abstract class Item {
 	 * @return mixed The value of the property.
 	 */
 	public function get( $property ) {
+		$property = strtolower( $property );
 		if ( property_exists( $this, $property ) ) {
 			return $this->$property;
 		}
@@ -107,6 +108,7 @@ abstract class Item {
 	 * @return mixed The value of the property.
 	 */
 	public function set( $property, $value, $silent = false ) {
+		$property = strtolower( $property );
 		if ( property_exists( $this, $property ) ) {
 			$this->$property = $value;
 
