@@ -297,6 +297,13 @@ HELP;
 	}
 
 	/**
+	 * Alias of cmd_select().
+	 */
+	protected function cmd_cd() {
+		$this->cmd_select();
+	}
+
+	/**
 	 * List sections/aliases/properties.
 	 *
 	 * @since 1.0.0
