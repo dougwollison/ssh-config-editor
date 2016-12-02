@@ -269,8 +269,7 @@ HELP;
 	 * @since 1.0.0
 	 */
 	public function cmd_list( $section = null, $alias = null ) {
-		$target = $this->find_target( $section, $alias );
-		if ( ! $target ) {
+		if ( ! ( $target = $this->find_target( $section, $alias ) ) ) {
 			return;
 		}
 		
@@ -289,6 +288,7 @@ HELP;
 	 * @since 1.0.0
 	 */
 	public function cmd_add() {
+		//
 	}
 
 	/**
@@ -352,8 +352,7 @@ HELP;
 	 * @param string $alias   Optional The alias to print.
 	 */
 	public function cmd_print( $section = null, $alias = null ) {
-		$target = $this->find_target( $section, $alias );
-		if ( ! $target ) {
+		if ( ! ( $target = $this->find_target( $section, $alias ) ) ) {
 			return;
 		}
 
