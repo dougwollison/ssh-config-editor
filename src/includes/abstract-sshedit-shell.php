@@ -113,6 +113,68 @@ abstract class Shell {
 
 		return array( $command, $args );
 	}
+	
+	/**
+	 * Print a pretty table to display data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $columns The columns of the table.
+	 * @param array $data    The rows data for the table.
+	 */
+	protected function pretty_table( $columns, $data ) {
+		$rows = array( $columns );
+	
+		$maxlengths = array_map( 'strlen', $columns );
+	
+		foreach ( $data as $key => $value ) {
+			$row = array();
+	
+			foreach ( $columns as $flag => $label ) {
+				$val = null;
+				if ( $flag == '@' ) {
+					$val = $key;
+				} else
+				if ( $flag == '$' ) {
+					$val = $value;
+				} else
+				if ( is_array( $value ) ) {
+					$val = $value[ $flag ];
+				} else
+				if ( is_a( $value, __NAMESPACE__ . '\\Item' ) ) {
+					$val = $value->get( $flag );
+				}
+	
+				$maxlengths[ $flag ] = max( array( strlen( $val ), $maxlengths[ $flag ] ) );
+	
+				$row[ $flag ] = $val;
+			}
+	
+			$rows[] = $row;
+		}
+	
+		$width = array_sum( $maxlengths ) + ( count( $columns ) * 2 ) + 3;
+		$border = str_repeat( '=', $width ) ."\n";
+	
+		$output = $border;
+		foreach ( $rows as $i => $row ) {
+			foreach ( $row as $flag => $cell ) {
+				$output .= '| ';
+				$output .= str_pad( $cell, $maxlengths[ $flag ], ' ' );
+				$output .= ' ';
+			}
+			$output .= '|';
+	
+			$output .= "\n";
+	
+			if ( ! $i ) {
+				$output .= $border;
+			}
+		}
+		$output .= $border;
+	
+		echo"\n{$output}\n";
+	}
 
 	/**
 	 * Default Quit handler.
