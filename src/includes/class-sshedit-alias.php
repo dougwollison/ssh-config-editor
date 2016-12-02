@@ -70,4 +70,21 @@ class Alias extends Item {
 		"	User {$this->user}\n" .
 		"	Port {$this->port}\n";
 	}
+	
+	/**
+	 * Dump the alias as an array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array The alias attributes in array form.
+	 */
+	public function dump() {
+		$array = array(
+			'Host' => $this->id,
+			'HostName' => $this->host_name,
+			'IdentityFile' => $this->identity_file,
+			'User' => $this->user,
+			'Port' => $this->port,
+		);
+	}
 }

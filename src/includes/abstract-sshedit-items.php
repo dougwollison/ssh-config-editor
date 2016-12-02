@@ -158,4 +158,26 @@ abstract class Items extends Item {
 
 		return $this->changed;
 	}
+	
+	/**
+	 * Dump the items as an array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param bool $self Wether to dump the items or itself.
+	 *
+	 * @return array The objects in array form.
+	 */
+	public function dump( $self = false ) {
+		$array = array();
+		
+		if ( $self ) {
+			return parent::dump( $self );
+		}
+		
+		foreach ( $this->items as $item ) {
+			$array[ $item->id() ] = $item->dump( 'self' );
+		}
+		return $array;
+	}
 }

@@ -127,4 +127,19 @@ abstract class Item {
 	public function has_changed() {
 		return $this->changed;
 	}
+	
+	/**
+	 * Dump the item as an array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array The object in array form.
+	 */
+	public function dump() {
+		return array(
+			'id' => $this->id,
+			'order' => $this->order,
+			'comment' => $this->comment,
+		);
+	}
 }
