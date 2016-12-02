@@ -255,8 +255,13 @@ HELP;
 			return;
 		}
 		
-		if ( $this->config->exists( $section ) ) {
+		if ( strpos( $section, '/' ) !== false ) {
+			list( $section, $alias ) = array_pad( explode( '/', $section ), 2, null );
+		}
+		
+		if ( $section && ! $this->config->exists( $section ) ) {
 			echo "Section '{$section}' not found.\n";
+			return;
 		}
 		
 		$this->section = $section;
@@ -292,11 +297,25 @@ HELP;
 	}
 
 	/**
+	 * Alias of cmd_list().
+	 */
+	protected function cmd_show() {
+		$this->cmd_list();
+	}
+
+	/**
+	 * Alias of cmd_list().
+	 */
+	protected function cmd_ls() {
+		$this->cmd_list();
+	}
+
+	/**
 	 * Create a section/alias.
 	 *
 	 * @since 1.0.0
 	 */
-	public function cmd_add( $type = null, $id = null ) {
+	public function cmd_add( $type = null, $id = null, $parent = null ) {
 		if ( ! $type ) {
 			echo "Specify a type of entry to add; 'section' or 'alias'.\n";
 			return;
@@ -313,23 +332,46 @@ HELP;
 		switch ( $type ) {
 			case 'section':
 				$section = $this->config->add( $id );
-				$section->set( 'comment', $this->prompt( 'Describe this section' ) );
+				$section->set( 'comment', $this->prompt( 'Describe this section:' ) );
 				$this->section = $id;
 				
 				echo "Section created and selected.\n";
 				break;
 				
 			case 'alias':
-				if ( ! $this->section ) {
-					$this->section = $this->config->get( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
+				if ( $parent ) {
+					if ( ! $this->config->exists( $parent ) ) {
+						echo "Unknown section '{$parent}'.\n";
+						return;
+					}
+					$this->section = $parent;
+				} elseif ( ! $this->section ) {
+					$section = $this->config->fetch( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
+					$this->section = $section->id;
 				}
 				
+				$section = $this->config->fetch( $this->section );
+				
 				$alias = $section->add( $id );
-				$alias->set( 'comment', $this->prompt( 'Describe this section' ) );
+				$alias->set( 'comment', $this->prompt( 'Describe this section:' ) );
+				
 				$alias->set( 'hostname', $this->prompt( 'Enter the host name.' ) );
-				$alias->set( 'identityfile', $this->prompt( 'Enter the path to the public key file.' ) );
 				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
 				$alias->set( 'port', $this->prompt( 'Enter the port number.', 22 ) );
+				
+				$default_path = $this->section . '/' . $id;
+				
+				$keyfile = self::realpath( $this->prompt( 'Enter the path to the public key file.', $default_path ) );
+				
+				if ( ! file_exists( $keyfile ) ) {
+					if ( $this->confirm( 'Key file does not exist. Create one there?' ) ) {
+						$keyfile = escapeshellarg( $keyfile );
+						echo "Redirecting you to SSH Keygen; creating an RSA 4096 key...\n";
+						passthru( "ssh-keygen -t RSA -b 4096 -f $keyfile" );
+					}
+				}
+				
+				$alias->set( 'identityfile', $keyfile );
 				
 				$this->alias = $id;
 				
@@ -375,10 +417,7 @@ HELP;
 			return;
 		}
 
-		$file = str_replace( '~', $_SERVER['HOME'], $file );
-		if ( strpos( $file, '/' ) !== 0 ) {
-			$file = getcwd() . '/' . $file;
-		}
+		$file = self::realpath( $file );
 
 		if ( file_exists( $file ) ) {
 			$this->config = new Config( $file );
