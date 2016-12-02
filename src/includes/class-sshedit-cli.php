@@ -380,7 +380,7 @@ HELP;
 				$section = $this->config->fetch( $this->section );
 
 				$alias = $section->add( $id );
-				$alias->set( 'comment', $this->prompt( 'Describe this section:' ) );
+				$alias->set( 'comment', $this->prompt( 'Describe this alias:' ) );
 
 				$alias->set( 'hostname', $this->prompt( 'Enter the host name.' ) );
 				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
