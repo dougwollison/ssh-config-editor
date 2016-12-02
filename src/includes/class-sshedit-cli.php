@@ -131,11 +131,31 @@ class CLI extends Shell {
 	protected function is_unsaved() {
 		if ( $this->config && $this->config->has_changed() ) {
 			if ( ! $this->confirm( "You have unsaved changes. Discard?" ) ) {
-				return false;
+				return true;
 			}
 		}
-
-		return true;
+		return false;
+	}
+	
+	/**
+	 * Resolve the provided section/alias arguments.
+	 *
+	 * Namely, if we are in a section already, assume alias was passed to $section.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string &$section The section requested, by reference.
+	 * @param string &$alias   The alias requested, by reference.
+	 */
+	protected function resolve_target( &$section, &$alias ) {
+		if ( $section && $alias ) {
+			return false;
+		}
+		
+		if ( $section && $this->section ) {
+			$alias = $section;
+			$section = $this->section;
+		}
 	}
 
 	/**
@@ -151,29 +171,26 @@ class CLI extends Shell {
 	protected function find_target( $section = null, $alias = null ) {
 		$target = $this->config;
 
-		if ( is_null( $section ) ) {
-			$section = $this->section;
-		} else
-		if ( is_null( $alias ) ) {
-			$alias = $this->alias;
-		}
+		$this->resolve_target( $section, $alias );
 
 		if ( $section ) {
 			if ( ! $target->exists( $section ) ) {
 				echo "Section {$section} not found.\n";
-				return;
+				return false;
 			}
 			$target = $target->fetch( $section );
 
 			if ( $alias ) {
 				if ( ! $target->exists( $alias ) ) {
 					echo "Alias {$alias} not found in section {$section}.\n";
-					return;
+					return false;
 				}
 
 				$target = $target->fetch( $alias );
 			}
 		}
+		
+		return $target;
 	}
 
 	/**
@@ -219,19 +236,51 @@ HELP;
 	}
 
 	/**
-	 * List sections/aliases/properties.
-	 *
-	 * @since 1.0.0
-	 */
-	public function cmd_list() {
-	}
-
-	/**
 	 * Select a section/alias to use.
 	 *
 	 * @since 1.0.0
 	 */
-	public function cmd_select() {
+	public function cmd_select( $section = null, $alias = null ) {
+		if ( ! $section ) {
+			echo "Please provide a section/alias ID.\n";
+			return;
+		}
+		
+		if ( $this->config->exists( $section ) ) {
+			echo "Section '{$section}' not found.\n";
+		}
+		
+		$this->section = $section;
+		
+		if ( $alias ) {
+			if ( $this->config->fetch( $section )->exists( $alias ) ) {
+				echo "Alias '{$alias}' not found in section '{$section}'.\n";
+				return;
+			}
+			
+			$this->alias = $alias;
+			echo "Selected alias '{$alias}' in section '{$section}'.\n";
+		}
+	}
+
+	/**
+	 * List sections/aliases/properties.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cmd_list( $section = null, $alias = null ) {
+		$target = $this->find_target( $section, $alias );
+		if ( ! $target ) {
+			return;
+		}
+		
+		$columns = array( '@' => 'Property', '$' => 'Value' );
+		
+		if ( is_a( $target, __NAMESPACE__ . '\\Items' ) ) {
+			$columns = array( '@' => 'Entry', 'comment' => 'Description' );
+		}
+		
+		return $this->pretty_table( $columns, $target->dump() );
 	}
 
 	/**
@@ -276,13 +325,15 @@ HELP;
 		}
 
 		$file = str_replace( '~', $_SERVER['HOME'], $file );
-		$file = realpath( $file );
+		if ( strpos( $file, '/' ) !== 0 ) {
+			$file = getcwd() . '/' . $file;
+		}
 
 		if ( file_exists( $file ) ) {
 			$this->config = new Config( $file );
 			echo "File loaded and ready for editing.\n";
 			return;
-		} else if ( is_writable( $file ) ) {
+		} else if ( is_writable( dirname( $file ) ) ) {
 			$this->config = new Config( $file );
 			echo "File open and ready for editing.\n";
 			return;
@@ -302,6 +353,9 @@ HELP;
 	 */
 	public function cmd_print( $section = null, $alias = null ) {
 		$target = $this->find_target( $section, $alias );
+		if ( ! $target ) {
+			return;
+		}
 
 		echo $target->compile();
 	}
