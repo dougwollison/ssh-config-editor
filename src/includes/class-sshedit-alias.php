@@ -76,9 +76,15 @@ class Alias extends Item {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param bool $self Wether to dump the Alias attributes or Item properties.
+	 *
 	 * @return array The alias attributes in array form.
 	 */
-	public function dump() {
+	public function dump( $self = false ) {
+		if ( $self ) {
+			return parent::dump( $self );
+		}
+		
 		return array(
 			'Host' => $this->id,
 			'HostName' => $this->hostname,
