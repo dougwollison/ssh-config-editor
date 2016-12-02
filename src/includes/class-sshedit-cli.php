@@ -326,6 +326,11 @@ HELP;
 				
 				$alias = $section->add( $id );
 				$alias->set( 'comment', $this->prompt( 'Describe this section' ) );
+				$alias->set( 'hostname', $this->prompt( 'Enter the host name.' ) );
+				$alias->set( 'identityfile', $this->prompt( 'Enter the path to the public key file.' ) );
+				$alias->set( 'user', $this->prompt( 'Enter the username.' ) );
+				$alias->set( 'port', $this->prompt( 'Enter the port number.', 22 ) );
+				
 				$this->alias = $id;
 				
 				echo "Alias created and selected.\n";
