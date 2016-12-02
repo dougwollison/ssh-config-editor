@@ -35,6 +35,15 @@ class CLI extends Shell {
 	 * @var array
 	 */
 	protected $path = array();
+	
+	/**
+	 * The path to the realine history file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
+	protected $command_log = '~/.sshedit_history';
 
 	/**
 	 * The config file currently being edited.

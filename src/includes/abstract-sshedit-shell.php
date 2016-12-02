@@ -35,6 +35,15 @@ abstract class Shell {
 	 * @var array
 	 */
 	protected $path = array();
+	
+	/**
+	 * The path to the realine history file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
+	protected $command_log = '~/.mish_history';
 
 	/**
 	 * Initailize the CLI.
@@ -44,10 +53,17 @@ abstract class Shell {
 	 * @param string $file The file to load.
 	 */
 	public function __construct() {
+		$this->command_log = str_replace( '~', $_SERVER['HOME'], $this->command_log );
+		if ( file_exists( $this->command_log ) ) {
+			readline_read_history( $this->command_log );
+		}
+		
 		while ( true ) {
 			$this->before_loop();
 
 			$command = $this->prompt( static::NAME . ':' . implode( '/', $this->path ) . ' $' );
+			
+			readline_add_history( $command );
 
 			list( $command, $args ) = $this->parse_command( $command );
 
@@ -182,6 +198,10 @@ abstract class Shell {
 	 * @since 1.0.0
 	 */
 	protected function cmd_quit() {
+		if ( is_writable( $this->command_log ) || is_writable( dirname( $this->command_log ) ) ) {
+			readline_write_history( $this->command_log );
+		}
+		
 		echo"Bye!\n";
 		exit;
 	}
