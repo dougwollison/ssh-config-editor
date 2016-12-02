@@ -314,14 +314,21 @@ HELP;
 			case 'section':
 				$section = $this->config->add( $id );
 				$section->set( 'comment', $this->prompt( 'Describe this section' ) );
+				$this->section = $id;
+				
+				echo "Section created and selected.\n";
 				break;
 				
 			case 'alias':
 				if ( ! $this->section ) {
 					$this->section = $this->config->get( '(unsorted)' ) ?: $this->config->add( '(unsorted)' );
 				}
+				
 				$alias = $section->add( $id );
 				$alias->set( 'comment', $this->prompt( 'Describe this section' ) );
+				$this->alias = $id;
+				
+				echo "Alias created and selected.\n";
 				break;
 				
 			default:
