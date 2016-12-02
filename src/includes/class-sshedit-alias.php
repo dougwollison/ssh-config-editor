@@ -79,7 +79,7 @@ class Alias extends Item {
 	 * @return array The alias attributes in array form.
 	 */
 	public function dump() {
-		$array = array(
+		return array(
 			'Host' => $this->id,
 			'HostName' => $this->host_name,
 			'IdentityFile' => $this->identity_file,
