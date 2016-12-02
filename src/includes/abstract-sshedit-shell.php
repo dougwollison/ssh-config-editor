@@ -44,6 +44,24 @@ abstract class Shell {
 	 * @var array
 	 */
 	protected $command_log = '~/.mish_history';
+	
+	/**
+	 * Utility; resolve local/home paths.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $path The path to resolve.
+	 *
+	 * @return string The resolved path.
+	 */
+	protected static function realpath( $path ) {
+		$path = str_replace( '~', $_SERVER['HOME'], $path );
+		if ( strpos( $path, '/' ) !== 0 ) {
+			$path = getcwd() . '/' . $path;
+		}
+		
+		return $path;
+	}
 
 	/**
 	 * Initailize the CLI.
@@ -53,7 +71,7 @@ abstract class Shell {
 	 * @param string $file The file to load.
 	 */
 	public function __construct() {
-		$this->command_log = str_replace( '~', $_SERVER['HOME'], $this->command_log );
+		$this->command_log = self::realpath( $this->command_log );
 		if ( file_exists( $this->command_log ) ) {
 			readline_read_history( $this->command_log );
 		}
@@ -64,14 +82,16 @@ abstract class Shell {
 			$command = $this->prompt( static::NAME . ':' . implode( '/', $this->path ) . ' $' );
 			
 			readline_add_history( $command );
-
-			list( $command, $args ) = $this->parse_command( $command );
-
-			$method = "cmd_$command";
-			if ( method_exists( $this, $method ) ) {
-				call_user_func_array( array( $this, $method ), $args );
-			} else {
-				echo "Command not found.\n";
+			
+			foreach ( preg_split( '/\s*&{1,2}\s*/', $command, 0, PREG_SPLIT_NO_EMPTY ) as $command ) {
+				list( $command, $args ) = $this->parse_command( $command );
+	
+				$method = "cmd_$command";
+				if ( method_exists( $this, $method ) ) {
+					call_user_func_array( array( $this, $method ), $args );
+				} else {
+					echo "Command not found.\n";
+				}	
 			}
 
 			$this->after_loop();
