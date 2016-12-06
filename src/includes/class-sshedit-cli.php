@@ -386,9 +386,11 @@ HELP;
 				$alias->set( 'user', $this->prompt( 'Enter the username:' ) );
 				$alias->set( 'port', $this->prompt( 'Enter the port number:', 22 ) );
 
-				$default_path = basename( $this->config->get( 'file' ) ) . '/' . $this->section . '/' . $id;
+				$default_path = $this->section . '/' . $id;
 
 				$keyfile = self::realpath( $this->prompt( 'Enter the path to the public key file.', $default_path ) );
+				
+				mkdir( dirname( $keyfile ), 0700, true );
 
 				if ( ! file_exists( $keyfile ) ) {
 					if ( $this->confirm( 'Key file does not exist. Create one there?' ) ) {
@@ -632,8 +634,10 @@ HELP;
 		if ( ! $this->has_config() ) {
 			return;
 		}
+		
+		$file = $file ?: $this->config->get( 'file' );
 
-		if ( ! is_writable( $file ) ) {
+		if ( ! is_writable( $file ) && ! is_writable( dirname( $file ) ) ) {
 			echo "Unable to write to {$file}\n";
 			return;
 		}
