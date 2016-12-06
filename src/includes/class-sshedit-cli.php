@@ -475,7 +475,7 @@ HELP;
 				
 				$key = $value = null;
 				do {
-					if ( $key = $this->prompt( 'What are you updating? (comment, hostname, user, port, identityfile )' ) ) {
+					if ( $key = $this->prompt( 'What are you updating? (comment, hostname, user, port, identityfile)' ) ) {
 						$value = $this->prompt( "Enter the new {$key} value:" );
 						if ( $value !== '' ) {
 							$alias->set( $key, $value );
