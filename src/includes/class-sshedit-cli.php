@@ -417,6 +417,82 @@ HELP;
 	 * @since 1.0.0
 	 */
 	public function cmd_edit() {
+		if ( ! $type ) {
+			echo "Specify a type of entry to add; 'section' or 'alias'.\n";
+			return;
+		}
+
+		if ( ! $id ) {
+			$id = $this->prompt( 'Please provide an ID.' );
+			if ( ! $id ) {
+				echo "You must specify an ID.\n";
+				return;
+			}
+		}
+
+		switch ( $type ) {
+			case 'section':
+				if ( ! $config->exists( $id ) ) {
+					echo "Unknown section '{$parent}'.\n";
+					return;
+				}
+				
+				$section = $this->config->fetch( $id );
+				$section->set( 'comment', $this->prompt( 'Edit description (blank to skip):' ) );
+				$this->section = $id;
+
+				echo "Section edited and selected.\n";
+				break;
+
+			case 'alias':
+				if ( $parent ) {
+					if ( ! $this->config->exists( $parent ) ) {
+						echo "Unknown section '{$parent}'.\n";
+						return;
+					}
+				} elseif ( ! $this->section ) {
+					$parent = '(unsorted)';
+					if ( ! $this->config->exists( $parent ) ) {
+						echo "No section selected or specified.\n";
+						return;
+					}
+				} else {
+					$parent = $this->section;
+				}
+				
+				$this->section = $parent;
+
+				$section = $this->config->fetch( $parent );
+				
+				if ( ! $section->exists( $id ) ) {
+					echo "Alias '{$id}' not found within section '{$section}'.\n";
+					return;
+				}
+
+				$this->alias = $id;
+
+				$alias = $section->fetch( $id );
+				
+				$key = $value = null;
+				do {
+					if ( $key = $this->prompt( 'What are you updating? (comment, hostname, user, port, identityfile )' ) ) {
+						$value = $this->prompt( "Enter the new {$key} value:" );
+						if ( $value !== '' ) {
+							$alias->set( $key, $value );
+							echo "Updated {$key}.\n";
+						} else {
+							echo "No change made.\n";
+						}
+					}
+				} while ( $key );
+				
+				echo "Alias edited and selected.\n";
+				break;
+
+			default:
+				echo "Unknown type specified; please specify 'section' or 'alias'.\n";
+				break;
+		}
 	}
 
 	/**
@@ -425,6 +501,61 @@ HELP;
 	 * @since 1.0.0
 	 */
 	public function cmd_delete() {
+		if ( ! $type ) {
+			echo "Specify a type of entry to add; 'section' or 'alias'.\n";
+			return;
+		}
+
+		if ( ! $id ) {
+			$id = $this->prompt( 'Please provide an ID.' );
+			if ( ! $id ) {
+				echo "You must specify an ID.\n";
+				return;
+			}
+		}
+
+		switch ( $type ) {
+			case 'section':
+				if ( ! $config->exists( $id ) ) {
+					echo "Unknown section '{$parent}'.\n";
+					return;
+				}
+				
+				$this->config->delete( $id );
+
+				echo "Section edited and selected.\n";
+				break;
+
+			case 'alias':
+				if ( $parent ) {
+					if ( ! $this->config->exists( $parent ) ) {
+						echo "Unknown section '{$parent}'.\n";
+						return;
+					}
+				} elseif ( ! $this->section ) {
+					$parent = '(unsorted)';
+					if ( ! $this->config->exists( $parent ) ) {
+						echo "No section selected or specified.\n";
+						return;
+					}
+				} else {
+					$parent = $this->section;
+				}
+
+				$section = $this->config->fetch( $parent );
+				
+				if ( ! $section->exists( $id ) ) {
+					echo "Alias '{$id}' not found within section '{$section}'.\n";
+					return;
+				}
+				
+				$section->delete( $id );
+				break;
+
+			default:
+				echo "Unknown type specified; please specify 'section' or 'alias'.\n";
+				break;
+		}
 	}
 
 	/**
