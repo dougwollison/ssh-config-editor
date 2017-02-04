@@ -389,14 +389,14 @@ HELP;
 				$default_path = $this->section . '/' . $id;
 
 				$keyfile = self::realpath( $this->prompt( 'Enter the path to the public key file.', $default_path ) );
-				
+
 				mkdir( dirname( $keyfile ), 0700, true );
 
 				if ( ! file_exists( $keyfile ) ) {
 					if ( $this->confirm( 'Key file does not exist. Create one there?' ) ) {
 						$keyfile = escapeshellarg( $keyfile );
 						echo "Redirecting you to SSH Keygen; creating an RSA 4096 key...\n";
-						passthru( "ssh-keygen -t RSA -b 4096 -f $keyfile" );
+						passthru( "ssh-keygen -t rsa -b 4096 -f $keyfile" );
 					}
 				}
 
@@ -438,7 +438,7 @@ HELP;
 					echo "Unknown section '{$parent}'.\n";
 					return;
 				}
-				
+
 				$section = $this->config->fetch( $id );
 				$section->set( 'comment', $this->prompt( 'Edit description (blank to skip):' ) );
 				$this->section = $id;
@@ -461,11 +461,11 @@ HELP;
 				} else {
 					$parent = $this->section;
 				}
-				
+
 				$this->section = $parent;
 
 				$section = $this->config->fetch( $parent );
-				
+
 				if ( ! $section->exists( $id ) ) {
 					echo "Alias '{$id}' not found within section '{$section}'.\n";
 					return;
@@ -474,7 +474,7 @@ HELP;
 				$this->alias = $id;
 
 				$alias = $section->fetch( $id );
-				
+
 				$key = $value = null;
 				do {
 					if ( $key = $this->prompt( 'What are you updating? (comment, hostname, user, port, identityfile)' ) ) {
@@ -487,7 +487,7 @@ HELP;
 						}
 					}
 				} while ( $key );
-				
+
 				echo "Alias edited and selected.\n";
 				break;
 
@@ -522,7 +522,7 @@ HELP;
 					echo "Unknown section '{$parent}'.\n";
 					return;
 				}
-				
+
 				$this->config->delete( $id );
 
 				echo "Section edited and selected.\n";
@@ -545,12 +545,12 @@ HELP;
 				}
 
 				$section = $this->config->fetch( $parent );
-				
+
 				if ( ! $section->exists( $id ) ) {
 					echo "Alias '{$id}' not found within section '{$section}'.\n";
 					return;
 				}
-				
+
 				$section->delete( $id );
 				break;
 
@@ -634,7 +634,7 @@ HELP;
 		if ( ! $this->has_config() ) {
 			return;
 		}
-		
+
 		$file = $file ?: $this->config->get( 'file' );
 
 		if ( ! is_writable( $file ) && ! is_writable( dirname( $file ) ) ) {
